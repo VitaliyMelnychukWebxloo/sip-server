@@ -665,7 +665,14 @@ function makeWsTransport(options, callback) {
     var ws = flows[[flow.address, flow.port, flow.local.address, flow.local.port].join()];
     if(ws) {
       return {
-        send: function(m) { ws.send(stringify(m)); },
+        send: function(m) {
+					try {
+						ws.send(stringify(m));
+					} catch(ex) {
+						// intentionally swallow
+						console.log("Tried to send a message to a websocket that was already closed");
+					}
+				},
         release: function() {},
         protocol: 'WS'
       };
