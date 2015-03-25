@@ -1278,7 +1278,7 @@ exports.create = function(options, callback, responseHandler) {
         }
       }
       else {
-				responseHandler(m, remote, after(m, remote) {
+				responseHandler(m, remote, function(m, remote) {
 					t.message && t.message(m, remote);
 				});
       }
