@@ -107,7 +107,7 @@ exports.start = function(options, route, responseHandler) {
     else {
       onRequest(rq, route, remote);
     }
-  }, responseHandler:);
+  }, responseHandler);
 };
 
 exports.stop = sip.stop;
