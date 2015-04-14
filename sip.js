@@ -1380,8 +1380,8 @@ exports.create = function(options, callback, responseHandler) {
   } 
 }
 
-exports.start = function(options, callback, responseHandler) {
-  var r = exports.create(options, callback, responseHandler);
+exports.start = function(options, requestHandler, responseHandler) {
+  var r = exports.create(options, requestHandler, responseHandler);
 
   exports.send = r.send;
   exports.stop = r.destroy;
