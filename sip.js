@@ -602,7 +602,7 @@ function makeTcpTransport(options, callback) {
     callback);
 }
 
-function makeWsTransport(options, callback) {
+function makeWsTransport(options, callback, onClose) {
   var flows = Object.create(null);
   var clients = Object.create(null);
 
@@ -614,7 +614,12 @@ function makeWsTransport(options, callback) {
 
     flows[flowid] = ws;
 
-    ws.on('close', function() { delete flows[flowid]; });
+    ws.on('close', function() {
+      delete flows[flowid];
+      if(typeof(onClose) == 'function') {
+        onClose(flowid);
+      }
+    });
     ws.on('message', function(data) {
       var msg = parseMessage(data);
       if(msg) {
@@ -737,7 +742,7 @@ function makeUdpTransport(options, callback) {
   }
 }
 
-function makeTransport(options, callback) {
+function makeTransport(options, callback, onClose) {
   var protocols = {};
 
   var callbackAndLog = callback;
@@ -755,7 +760,7 @@ function makeTransport(options, callback) {
   if(options.tls)
     protocols.TLS = makeTlsTransport(options, callbackAndLog);
   if(options.ws_port && WebSocket)
-    protocols.WS = makeWsTransport(options, callbackAndLog);
+    protocols.WS = makeWsTransport(options, callbackAndLog, onClose);
 
   function wrap(obj, target) {
     return Object.create(obj, {send: {value: function(m) {
@@ -795,6 +800,9 @@ function makeTransport(options, callback) {
       protocols = [];
       Object.keys(protos).forEach(function(key) { protos[key].destroy(); });
     },
+    protocols: function() {
+      return protocols;
+    }
   };
 }
 
@@ -1256,7 +1264,7 @@ function sequentialSearch(transaction, connect, addresses, rq, callback) {
   next();
 }
 
-exports.create = function(options, callback, responseHandler) {
+exports.create = function(options, callback, responseHandler, closeHandler) {
   var errorLog = (options.logger && options.logger.error) || function() {};
 
   var transport = makeTransport(options, function(m,remote) {
@@ -1286,7 +1294,7 @@ exports.create = function(options, callback, responseHandler) {
     catch(e) {
       errorLog(e);
     }
-  });
+  }, closeHandler);
   
   var transaction = makeTransactionLayer(options, transport.open.bind(transport));
   var hostname = options.publicAddress || options.address || options.hostname || os.hostname();
@@ -1380,8 +1388,8 @@ exports.create = function(options, callback, responseHandler) {
   } 
 }
 
-exports.start = function(options, requestHandler, responseHandler) {
-  var r = exports.create(options, requestHandler, responseHandler);
+exports.start = function(options, requestHandler, responseHandler, closeHandler) {
+  var r = exports.create(options, requestHandler, responseHandler, closeHandler);
 
   exports.send = r.send;
   exports.stop = r.destroy;
