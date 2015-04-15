@@ -83,7 +83,7 @@ function onRequest(rq, route, remote) {
 };
 
 
-exports.start = function(options, route, responseHandler) {
+exports.start = function(options, route, responseHandler, closeHandler) {
 
 	if(typeof(responseHandler) == "undefined") {
 		responseHandler = function(req, flow, after) { after(req, flow); };
@@ -93,21 +93,23 @@ exports.start = function(options, route, responseHandler) {
       var ctx = contexts[makeContextId(rq)];
 
       if(ctx) {
-        sip.send(sip.makeResponse(rq, 200));
-       
+        // sip.send(sip.makeResponse(rq, 200));
+        onRequest(rq, route, remote);
+
         ctx.cancelled = true;
         if(ctx.cancellers) {
           Object.keys(ctx.cancellers).forEach(function(c) { ctx.cancellers[c](); });
         }
       }
       else {
-        sip.send(sip.makeResponse(rq, 481));
+        // sip.send(sip.makeResponse(rq, 481));
+        onRequest(rq, route, remote);
       }
     }
     else {
       onRequest(rq, route, remote);
     }
-  }, responseHandler);
+  }, responseHandler, closeHandler);
 };
 
 exports.stop = sip.stop;
