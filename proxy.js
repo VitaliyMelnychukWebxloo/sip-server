@@ -93,7 +93,7 @@ exports.start = function(options, route, responseHandler, closeHandler) {
       var ctx = contexts[makeContextId(rq)];
 
       if(ctx) {
-        // sip.send(sip.makeResponse(rq, 200));
+        sip.send(sip.makeResponse(rq, 200));
         onRequest(rq, route, remote);
 
         ctx.cancelled = true;
@@ -102,7 +102,7 @@ exports.start = function(options, route, responseHandler, closeHandler) {
         }
       }
       else {
-        // sip.send(sip.makeResponse(rq, 481));
+        sip.send(sip.makeResponse(rq, 481));
         onRequest(rq, route, remote);
       }
     }
