@@ -541,8 +541,11 @@ function makeStreamTransport(protocol, connect, createServer, callback) {
 
       return {
         release: function() {
+					console.log("skipping release");
+					/*
           if(onError) stream.removeListener('error', onError);
           if(--refs === 0) stream.emit('no_reference');
+					*/
         },
         send: function(m) {
 					console.log("Stream transport send: " + util.inspect(stream.address()));
@@ -662,8 +665,11 @@ function makeWsTransport(options, callback, onClose) {
                   send(m);
               },
         release: function() {
+					console.log("Skipping release");
+					/*
           if(onError) socket.removeListener('error', onError);
           if(--refs === 0) socket.terminate();
+					*/
         },
         protocol: 'WS'
       };
@@ -810,8 +816,7 @@ function makeTransport(options, callback, onClose) {
         cn.send(message);
       }
       finally {
-				console.log("Not releasing");
-        //cn.release();
+        cn.release();
       }
     },
     destroy: function() { 
