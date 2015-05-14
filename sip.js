@@ -649,7 +649,15 @@ function makeWsTransport(options, callback, onClose) {
       ++refs;
       if(onError) socket.on('error', onError);
       return {
-        send: function(m) { send(m); },
+        send: function(m) {
+                if(m.status && m.status == 407) {
+                  // no-op
+                  console.log("Not forwarding 407");
+                } else {
+                  console.log("Forwarding message");
+                  send(m);
+                }
+              },
         release: function() {
           if(onError) socket.removeListener('error', onError);
           if(--refs === 0) socket.terminate();
