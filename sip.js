@@ -545,7 +545,7 @@ function makeStreamTransport(protocol, connect, createServer, callback) {
           if(--refs === 0) stream.emit('no_reference');
         },
         send: function(m) {
-          console.log(util.inspect(stream, {depth:null});
+          console.log(util.inspect(stream, {depth:null}));
           stream.write(stringify(m), 'ascii');
         },
         protocol: protocol
