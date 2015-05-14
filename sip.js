@@ -810,7 +810,8 @@ function makeTransport(options, callback, onClose) {
         cn.send(message);
       }
       finally {
-        cn.release();
+				console.log("Not releasing");
+        //cn.release();
       }
     },
     destroy: function() { 
