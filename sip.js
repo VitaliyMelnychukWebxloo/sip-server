@@ -541,11 +541,14 @@ function makeStreamTransport(protocol, connect, createServer, callback) {
 
       return {
         release: function() {
+					console.log("skipping release");
+					/*
           if(onError) stream.removeListener('error', onError);
           if(--refs === 0) stream.emit('no_reference');
+					*/
         },
         send: function(m) {
-          console.log(util.inspect(stream, {depth:null}));
+					console.log("Stream transport send: " + util.inspect(stream.address()));
           stream.write(stringify(m), 'ascii');
         },
         protocol: protocol
@@ -656,8 +659,11 @@ function makeWsTransport(options, callback, onClose) {
                   send(m);
               },
         release: function() {
+					console.log("Skipping release");
+					/*
           if(onError) socket.removeListener('error', onError);
           if(--refs === 0) socket.terminate();
+					*/
         },
         protocol: 'WS'
       };
@@ -732,6 +738,7 @@ function makeUdpTransport(options, callback) {
   function open(remote, error) {
     return {
       send: function(m) {
+				console.log("UDP send: " + address + ":" + port);
         var s = stringify(m);
         socket.send(new Buffer(s, 'ascii'), 0, s.length, remote.port, remote.address);          
       },
