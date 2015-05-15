@@ -638,13 +638,7 @@ function makeWsTransport(options, callback, onClose) {
     
     function send_connecting(m) { queue.push(stringify(m)); }
     function send_open(m) {
-      if(m.status && m.status == 407) {
-        // no-op
-        console.log("Not forwarding 407");
-      } else {
-        console.log("Forwarding message");
-        socket.send(typeof m === 'string' ? m : stringify(m));
-      }
+      socket.send(typeof m === 'string' ? m : stringify(m));
     }
     var send = send_connecting;
 
@@ -683,13 +677,7 @@ function makeWsTransport(options, callback, onClose) {
       return {
         send: function(m) {
 					try {
-            if(m.status && m.status == 407) {
-              // no-op
-              console.log("Flow: Not forwarding 407");
-            } else {
-              console.log("Flow: Forwarding message");
-              ws.send(stringify(m));
-            }
+            ws.send(stringify(m));
 					} catch(ex) {
 						// intentionally swallow
 						console.log("Tried to send a message to a websocket that was already closed");
