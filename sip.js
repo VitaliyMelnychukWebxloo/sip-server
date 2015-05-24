@@ -541,11 +541,8 @@ function makeStreamTransport(protocol, connect, createServer, callback) {
 
       return {
         release: function() {
-					console.log("skipping release");
-					/*
           if(onError) stream.removeListener('error', onError);
           if(--refs === 0) stream.emit('no_reference');
-					*/
         },
         send: function(m) {
 					console.log("Stream transport send: " + util.inspect(stream.address()));
