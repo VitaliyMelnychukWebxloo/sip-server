@@ -195,7 +195,13 @@ function parse(data) {
       return;
     }
 
-    var name = unescape(r[1]).toLowerCase();
+    var name = unescape(r[1]);
+    
+    /* Do not convert custom headers to alternate names */
+    if(name.match(/^X-/i)) {
+      name = unescape(r[1]).toLowerCase();
+    }
+
     name = compactForm[name] || name;
 
     m.headers[name] = (parsers[name] || parseGenericHeader)({s:r[2], i:0}, m.headers[name]);
@@ -731,7 +737,7 @@ function makeUdpTransport(options, callback) {
   function open(remote, error) {
     return {
       send: function(m) {
-				console.log("UDP send: " + address + ":" + port);
+				console.log("UDP send: " + remote.address + ":" + remote.port);
         var s = stringify(m);
         socket.send(new Buffer(s, 'ascii'), 0, s.length, remote.port, remote.address);          
       },
