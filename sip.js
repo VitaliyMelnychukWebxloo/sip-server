@@ -195,11 +195,11 @@ function parse(data) {
       return;
     }
 
-    var name = unescape(r[1]);
+    var name = unescape(r[1]).toLowerCase();
     
     /* Do not convert custom headers to alternate names */
     if(name.match(/^X-/i)) {
-      name = unescape(r[1]).toLowerCase();
+      name = unescape(r[1]);
     }
 
     name = compactForm[name] || name;
