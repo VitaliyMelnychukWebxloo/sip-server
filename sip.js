@@ -949,6 +949,11 @@ function createInviteServerTransaction(transport, cleanup) {
       if(rs) transport(rs);
     },
     send: function(message) {
+
+			console.log("INSIDE INTERNAL InviteServerTransaction send:");
+			console.log("METHOD: " + message.method);
+			console.log("VIA: " + util.inspect(message.headers.via));
+
       rs = message;
 
       if(message.status >= 300)
@@ -992,6 +997,9 @@ function createInviteServerTransaction(transport, cleanup) {
     enter: function() { l = setTimeout(sm.enter.bind(sm, terminated), 32000);},
     leave: function() { clearTimeout(l); },
     send: function(m) { 
+			console.log("INSIDE INTERNAL InviteServerTransaction accepted state send:");
+			console.log("METHOD: " + m.method);
+			console.log("VIA: " + util.inspect(m.headers.via));
       rs = m;
       transport(rs);
     }  
@@ -1329,6 +1337,11 @@ exports.create = function(options, callback, responseHandler, closeHandler) {
   
   return {
     send: function(m, callback) {
+
+			console.log("INSIDE INTERNAL TOP LEVEL SEND: ");
+			console.log("METHOD: " + m.method);
+			console.log("VIA: " + util.inspect(m.headers.via));
+
       if(m.method === undefined) {
         var t = transaction.getServer(m);
         t && t.send && t.send(m);
