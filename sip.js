@@ -1305,15 +1305,9 @@ exports.create = function(options, callback, responseHandler, closeHandler) {
         }
       }
       else {
-
-				// attempt to avoid weird scenario where response handler is used for requests...
-				if(!m.method) {
-					responseHandler(m, remote, function(m, remote) {
-						t.message && t.message(m, remote);
-					});
-				} else {
-					callback(m, remote);
-				}
+				responseHandler(m, remote, function(m, remote) {
+					t.message && t.message(m, remote);
+				});
       }
     } 
     catch(e) {
