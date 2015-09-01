@@ -1305,9 +1305,13 @@ exports.create = function(options, callback, responseHandler, closeHandler) {
         }
       }
       else {
-				responseHandler(m, remote, function(m, remote) {
+				if(!m.method) {
+					responseHandler(m, remote, function(m, remote) {
+						t.message && t.message(m, remote);
+					});
+				} else {
 					t.message && t.message(m, remote);
-				});
+				}
       }
     } 
     catch(e) {
