@@ -1399,7 +1399,7 @@ exports.create = function(options, callback, responseHandler, closeHandler) {
       }
     },
     encodeFlowUri: function(flow) {
-      return {schema: flow.protocol === 'TLS' ? 'sips' : 'sip', user: encodeFlowToken(flow), host: hostname, params:{}};
+      return {schema: flow.protocol === 'TLS' ? 'sips' : 'sip', user: encodeFlowToken(flow), host: hostname, options.port, params:{}};
     },
     decodeFlowUri: function(uri) {
       uri = parseUri(uri);
