@@ -709,7 +709,7 @@ function makeWsTransport(options, callback, onClose) {
   return {
     get: open,
     open: open,
-    destroy: function() { server.close(); }
+    destroy: function() { console.log("Something called destroy on the websocket"); server.close(); }
   }
 }
 
