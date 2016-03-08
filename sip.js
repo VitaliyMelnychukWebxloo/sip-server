@@ -775,7 +775,7 @@ function makeTransport(options, callback, onClose) {
 
   function wrap(obj, target) {
     return Object.create(obj, {send: {value: function(m) {
-      if(m.method) {
+      if(m.method && m.headers && m.headers.via && m.headers.via.length > 0) {
         m.headers.via[0].host = options.publicAddress || options.address || options.hostname || os.hostname();
         m.headers.via[0].port = options.port || defaultPort(this.protocol);
         m.headers.via[0].protocol = this.protocol;
