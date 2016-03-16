@@ -10,6 +10,13 @@ var WebSocket = require('ws');
 
 $$blacklist = {};
 
+// rate limit accounting
+var RATE_LIMIT_WINDOW = 30 * 1000; // 30 seconds
+$$messageCounts = {};
+setInterval(function() {
+	$$messageCounts = {}; // reset counts
+}, RATE_LIMIT_WINDOW);
+
 function debug(e) {
   if(e.stack) {
     util.debug(e + '\n' + e.stack);
@@ -718,10 +725,15 @@ function makeWsTransport(options, callback, onClose) {
 function makeUdpTransport(options, callback) {
   function onMessage(data, rinfo) {
 
-		// before anything, check ip blacklist/rate limits
-		if($$blacklist[rinfo.address]) {
+		var RATE_LIMIT = 300; // messages/30 sec window
+
+		// before anything, check ip blacklist and apply rate limits
+		if($$blacklist[rinfo.address] || ($$messageCounts[rinfo.address] && $$messageCounts[rinfo.address] >= RATE_LIMIT)) {
 			console.log(rinfo.address + " on temporary blacklist, dropping message.");
 			return;
+		} else {
+			$$messageCounts[rinfo.address] = $$messageCounts[rinfo.address] || 0;
+			$$messageCounts[rinfo.address]++;
 		}
 
 		var msg = parseMessage(data);
