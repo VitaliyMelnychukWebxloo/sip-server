@@ -9,6 +9,7 @@ var crypto = require('crypto');
 var WebSocket = require('ws');
 
 $$blacklist = {};
+$$blacklistCounts = {};
 
 // rate limit accounting
 var RATE_LIMIT_WINDOW = 30 * 1000; // 30 seconds
@@ -726,13 +727,27 @@ function makeUdpTransport(options, callback) {
   function onMessage(data, rinfo) {
 
 		var RATE_LIMIT = 300; // messages/30 sec window
+		var BLACKLIST_LIMIT = 5; // exceed the rate limit 5 times and get added to the blacklist
 
 		// before anything, check ip blacklist and apply rate limits
 		$$messageCounts[rinfo.address] = $$messageCounts[rinfo.address] || 0;
 		$$messageCounts[rinfo.address]++;
-		if($$blacklist[rinfo.address] || ($$messageCounts[rinfo.address] && $$messageCounts[rinfo.address] >= RATE_LIMIT)) {
+		if($$blacklist[rinfo.address]) {
 			if(process.env.VERBOSE) {
-				console.log(rinfo.address + " on temporary blacklist, dropping message(s).");
+				console.log(rinfo.address + " on blacklist, dropping message.");
+			}
+			return;
+		}
+		if($$messageCounts[rinfo.address] && $$messageCounts[rinfo.address] >= RATE_LIMIT) {
+			$$blacklistCounts[rinfo.address] = $$blacklistCounts[rinfo.address] || 0;
+			$$blacklistCounts[rinfo.address]++;
+			if($$blacklistCounts[rinfo.address] > BLACKLIST_LIMIT) {
+				$$blacklist[rinfo.address] = true;
+				console.log(rinfo.address + " exceeded rate limit " + BLACKLIST_LIMIT + " times, adding to permanent blacklist for this session");
+				return;
+			}
+			if(process.env.VERBOSE) {
+				console.log(rinfo.address + " exceeded rate limit, dropping message.");
 			}
 			return;
 		}
