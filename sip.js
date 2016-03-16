@@ -10,13 +10,16 @@ var WebSocket = require('ws');
 
 $$blacklist = {};
 $$blacklistCounts = {};
+$$blacklistWindowed = {};
 
 // rate limit accounting
 var RATE_LIMIT_WINDOW = 30 * 1000; // 30 seconds
 $$messageCounts = {};
 setInterval(function() {
 	$$messageCounts = {}; // reset counts
+	$$blacklistWindowed = {}; // toggle blacklist window flags, used for counting the number of windows violated
 }, RATE_LIMIT_WINDOW);
+
 
 function debug(e) {
   if(e.stack) {
@@ -739,8 +742,11 @@ function makeUdpTransport(options, callback) {
 			return;
 		}
 		if($$messageCounts[rinfo.address] && $$messageCounts[rinfo.address] >= RATE_LIMIT) {
-			$$blacklistCounts[rinfo.address] = $$blacklistCounts[rinfo.address] || 0;
-			$$blacklistCounts[rinfo.address]++;
+			if($$blacklistWindowed[rinfo.address]) {
+				$$blacklistCounts[rinfo.address] = $$blacklistCounts[rinfo.address] || 0;
+				$$blacklistCounts[rinfo.address]++;
+				$$blacklistWindowed[rinfo.address] = true;
+			}
 			if($$blacklistCounts[rinfo.address] > BLACKLIST_LIMIT) {
 				$$blacklist[rinfo.address] = true;
 				console.log(rinfo.address + " exceeded rate limit " + BLACKLIST_LIMIT + " times, adding to permanent blacklist for this session");
