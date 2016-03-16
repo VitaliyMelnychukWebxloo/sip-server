@@ -742,7 +742,7 @@ function makeUdpTransport(options, callback) {
 			return;
 		}
 		if($$messageCounts[rinfo.address] && $$messageCounts[rinfo.address] >= RATE_LIMIT) {
-			if($$blacklistWindowed[rinfo.address]) {
+			if(!$$blacklistWindowed[rinfo.address]) {
 				$$blacklistCounts[rinfo.address] = $$blacklistCounts[rinfo.address] || 0;
 				$$blacklistCounts[rinfo.address]++;
 				$$blacklistWindowed[rinfo.address] = true;
