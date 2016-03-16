@@ -722,10 +722,9 @@ function makeUdpTransport(options, callback) {
 		if($$blacklist[rinfo.address]) {
 			console.log(rinfo.address + " on temporary blacklist, dropping message.");
 			return;
-		} else {
-			console.log("DEBUG: datagram from: " + rinfo.address);
 		}
-    var msg = parseMessage(data);
+
+		var msg = parseMessage(data);
    
     if(msg && checkMessage(msg)) {
       if(msg.method) {
