@@ -728,12 +728,11 @@ function makeUdpTransport(options, callback) {
 		var RATE_LIMIT = 300; // messages/30 sec window
 
 		// before anything, check ip blacklist and apply rate limits
+		$$messageCounts[rinfo.address] = $$messageCounts[rinfo.address] || 0;
+		$$messageCounts[rinfo.address]++;
 		if($$blacklist[rinfo.address] || ($$messageCounts[rinfo.address] && $$messageCounts[rinfo.address] >= RATE_LIMIT)) {
-			console.log(rinfo.address + " on temporary blacklist, dropping message.");
+			console.log(rinfo.address + " on temporary blacklist, dropping message(s).");
 			return;
-		} else {
-			$$messageCounts[rinfo.address] = $$messageCounts[rinfo.address] || 0;
-			$$messageCounts[rinfo.address]++;
 		}
 
 		var msg = parseMessage(data);
