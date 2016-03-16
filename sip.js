@@ -731,7 +731,9 @@ function makeUdpTransport(options, callback) {
 		$$messageCounts[rinfo.address] = $$messageCounts[rinfo.address] || 0;
 		$$messageCounts[rinfo.address]++;
 		if($$blacklist[rinfo.address] || ($$messageCounts[rinfo.address] && $$messageCounts[rinfo.address] >= RATE_LIMIT)) {
-			console.log(rinfo.address + " on temporary blacklist, dropping message(s).");
+			if(process.env.VERBOSE) {
+				console.log(rinfo.address + " on temporary blacklist, dropping message(s).");
+			}
 			return;
 		}
 
