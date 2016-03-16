@@ -8,6 +8,8 @@ var os = require('os');
 var crypto = require('crypto');
 var WebSocket = require('ws');
 
+$$blacklist = {};
+
 function debug(e) {
   if(e.stack) {
     util.debug(e + '\n' + e.stack);
@@ -715,6 +717,14 @@ function makeWsTransport(options, callback, onClose) {
 
 function makeUdpTransport(options, callback) {
   function onMessage(data, rinfo) {
+
+		// before anything, check ip blacklist/rate limits
+		if($$blacklist[rinfo.address]) {
+			console.log(rinfo.address + " on temporary blacklist, dropping message.");
+			return;
+		} else {
+			console.log("DEBUG: datagram from: " + rinfo.address);
+		}
     var msg = parseMessage(data);
    
     if(msg && checkMessage(msg)) {
