@@ -5,6 +5,9 @@ var contexts = {};
 
 function makeContextId(msg) {
   var via = msg.headers.via[0];
+	if(!via) {
+		return null;
+	}
   return [via.params.branch, via.protocol, via.host, via.port, msg.headers['call-id'], msg.headers.cseq.seq];
 }
 
