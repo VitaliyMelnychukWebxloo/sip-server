@@ -1350,7 +1350,7 @@ exports.create = function(options, callback, responseHandler, closeHandler) {
       }
     } 
     catch(e) {
-      errorLog(e);
+      errorLog(e, m);
     }
   }, closeHandler);
   
@@ -1409,7 +1409,7 @@ exports.create = function(options, callback, responseHandler, closeHandler) {
         })(function(addresses) {
           if(m.method === 'ACK') {
             if(addresses.length === 0) {
-              errorLog(new Error("ACK: couldn't resolve " + stringifyUri(m.uri)));
+              errorLog(new Error("ACK: couldn't resolve " + stringifyUri(m.uri)), m);
               return;
             }
 
@@ -1418,7 +1418,7 @@ exports.create = function(options, callback, responseHandler, closeHandler) {
               cn.send(m);
             } 
             catch(e) {
-              errorLog(e);
+              errorLog(e, m);
             }
             finally {
               cn.release();
