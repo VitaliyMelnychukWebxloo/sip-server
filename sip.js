@@ -1226,7 +1226,8 @@ function makeTransactionId(m) {
   }
 
   var branchId = m.headers.via && 
-    typeof(m.headers.via) === typeof([]) && 
+    typeof(m.headers.via) === typeof([]) &&
+    m.headers.via[0] &&
     m.headers.via[0].params && 
     m.headers.via[0].params.branch;
 
