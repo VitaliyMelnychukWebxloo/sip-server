@@ -1221,9 +1221,20 @@ function createClientTransaction(rq, transport, tu, cleanup) {
 }
 
 function makeTransactionId(m) {
-  if(m.method === 'ACK')
+  if(m.method === 'ACK') {
     return ['INVITE', m.headers['call-id'], m.headers.via[0].params.branch].join();
-  return [m.headers.cseq.method, m.headers['call-id'], (m.headers.via[0].params && m.headers.via[0].params.branch)].join();
+  }
+
+  var branchId = m.headers.via && 
+    typeof(m.headers.via) === typeof([]) && 
+    m.headers.via[0].params && 
+    m.headers.via[0].params.branch;
+
+  return [
+    m.headers.cseq.method, 
+    m.headers['call-id'], 
+    branchId || ''
+  ].join();
 }
 
 function makeTransactionLayer(options, transport) {
