@@ -354,7 +354,15 @@ var stringifiers = {
   'authentication-info': function(h) {
     return 'Authentication-Info: ' + stringifyAuthHeader(h) + '\r\n';
   },
-  'refer-to': function(h) { return 'Refer-To: ' + stringifyAOR(h) + '\r\n'; }
+  'refer-to': function(h) { 
+    return 'Refer-To: ' + stringifyAOR(h) + '\r\n'; 
+  },
+  'subscription-state': function(h) {
+    return 'Subscription-State: ' + h + '\r\n';
+  },
+  'event': function(h) {
+    return 'Event: ' + h + '\r\n';
+  }
 };
 
 function stringify(m) {
