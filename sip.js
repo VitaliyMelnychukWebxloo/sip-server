@@ -652,6 +652,7 @@ function makeWsTransport(options, callback, onClose) {
       }
     });
     ws.on('message', function(data) {
+      console.log("message received over ws", util.inspect(data));
       var msg = parseMessage(data);
       if(msg) {
         callback(msg, {protocol: 'WS', address: remote.address, port: remote.port, local: local});
