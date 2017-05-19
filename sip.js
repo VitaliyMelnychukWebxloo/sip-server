@@ -652,7 +652,15 @@ function makeWsTransport(options, callback, onClose) {
       }
     });
     ws.on('message', function(data) {
-      console.log("message received over ws", util.inspect(data));
+
+      /* 
+       * Respond to keepalives from SIP.js with one CRLF
+       * */
+      if(data === "\r\n\r\n") {
+        ws.send("\r\n");
+        return;
+      }
+
       var msg = parseMessage(data);
       if(msg) {
         callback(msg, {protocol: 'WS', address: remote.address, port: remote.port, local: local});
